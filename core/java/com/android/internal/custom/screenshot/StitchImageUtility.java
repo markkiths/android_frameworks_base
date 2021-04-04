@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.media.MediaActionSound;
 import android.net.Uri;
 import android.os.UserHandle;
 import android.provider.Settings;
@@ -37,7 +36,6 @@ public class StitchImageUtility {
     private static final String EXTRA_VALUE_STITCHIMAGE_SETTINGS_CALLFROM_ASUSSETTINGS = "AsusSettings";
     private static String TAG = "StitchImageUtility";
     private final Context mContext;
-    private MediaActionSound mCameraSound;
     private PackageManager mPackageManager;
 
     public StitchImageUtility(Context context) {
@@ -53,23 +51,12 @@ public class StitchImageUtility {
                 intent.setComponent(new ComponentName(STITCHIMAGE_APP_PACKAGE_NAME, STITCHIMAGE_OVERLAY_SERVICE_CLASS));
                 intent.putExtra(EXTRA_KEY_STITCHIMAGE_SETTINGS_CALLFROM, EXTRA_VALUE_STITCHIMAGE_SETTINGS_CALLFROM_ASUSSETTINGS);
                 mContext.startServiceAsUser(intent, UserHandle.CURRENT);
-                playScreenshotSound();
                 return true;
             } catch (Exception e) {
                 Log.e(TAG, "trigger stitchimage failed, Exception :" + e);
             }
         }
         return false;
-    }
-
-    private void playScreenshotSound(){
-        if (mCameraSound == null){
-            mCameraSound = new MediaActionSound();
-            mCameraSound.load(MediaActionSound.SHUTTER_CLICK);
-        }
-        if (Settings.System.getIntForUser(mContext.getContentResolver(), Settings.System.SCREENSHOT_SOUND, 1, UserHandle.USER_CURRENT) == 1) {
-            mCameraSound.play(MediaActionSound.SHUTTER_CLICK);
-        }
     }
 
     private boolean isPackageAllowed(String focusedPackageName){
